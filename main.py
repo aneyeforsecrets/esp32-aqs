@@ -9,20 +9,17 @@ import logging.handlers as handlers
 
 # Some Settings
 
-co2eq_warning = 1500    # co2eq level in ppm after which the warning is triggered
+co2eq_warning_level = 1500    # co2eq level in ppm after which the warning is triggered
 
 # Set up logging
 logger = logging.getLogger('aqs')
-logger.setLevel(logging.INFO)
 
 # Here we define our formatter
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 logHandler = handlers.RotatingFileHandler(
-    'app.log', maxBytes=256, backupCount=2)
-
-logHandler.setLevel(logging.INFO)
+    'messages.log', maxBytes=256, backupCount=2)
 
 # Here we set our logHandler's formatter
 logHandler.setFormatter(formatter)
@@ -42,11 +39,11 @@ logging.info(
 
 sgp30.iaq_init()
 with open("data_file.json") as infile:
-    baselines = json.load(infile)
+    baseline = json.load(infile)
 
-sgp30.set_iaq_baseline(baselines["co2eq_base"], baselines["tvoc_base"])
+sgp30.set_iaq_baseline(baseline["co2eq_base"], baseline["tvoc_base"])
 logging.info("Restored baseline values co2eq %d and tvoc %d",
-             baselines["co2eq_base"], baselines["tvoc_base"])
+             baseline["co2eq_base"], baseline["tvoc_base"])
 
 # Create temperature sensor object
 dht = dht.DHT22(Pin(0))
@@ -72,11 +69,11 @@ while True:
         json.dump(log, outfile)
 
     # If CO2eq levels exceed 1500 ppm, turn on LED to signal it's time to crack open a window
-    if log["co2eq"] >= co2eq_warning and led_onboard.value() != 0:
-        logging.info("CO2eq level exceeded %d ppm!", co2eq_warning)
+    if log["co2eq"] >= co2eq_warning_level and led_onboard.value() != 0:
+        logging.info("CO2eq level exceeded %d ppm!", co2eq_warning_level)
         led_onboard.value(0)
     elif led_onboard.value() != 1:
-        logging.info("CO2eq back below %d ppm.", co2eq_warning)
+        logging.info("CO2eq back below %d ppm.", co2eq_warning_level)
         led_onboard.value(1)
 
     print("temp = {:5.1f} °C \t humi = {:5.1f}% \t CO2e = {:d} ppm \t TVOC = {:d} ppb".format(
@@ -90,10 +87,10 @@ while True:
     # depending on the environment. These values should be stored once every hour and restored after boot
     if elapsed_sec % 3600 == 0:
         elapsed_sec = 0
-        baselines["co2eq_base"] = sgp30.baseline_co2eq
-        baselines["tvoc_base"] = sgp30.baseline_tvoc
+        baseline["co2eq_base"] = sgp30.baseline_co2eq
+        baseline["tvoc_base"] = sgp30.baseline_tvoc
 
         with open("data_file.json", "w") as outfile:
-            json.dump(baselines, outfile)
+            json.dump(baseline, outfile)
 
         logging.info("Stored baselines to flash.")
