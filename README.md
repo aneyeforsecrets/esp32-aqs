@@ -5,11 +5,11 @@ An ESP32-Based Air Quality Sensor.
 Goal of the project is to build and configure an air quality sensor that sends air quality metrics to an external destination and caches it locally if no internet connection is available.
 
 # Parts
-Board: LOLIN D32 Pro V2.0.0
+- [LOLIN D32 Pro V2.0.0](https://wiki.wemos.cc/products:d32:d32_pro?s[]=esp32)
 
-CO2eq & TVOC sensor: Adafruit SGP30 Air Quality
+- [Adafruit SGP30 Air Quality Sensor](https://www.adafruit.com/product/3709)
 
-Temperature & Humidity sensor: DHT22
+- [DHT22 temperature-humidity sensor](https://www.adafruit.com/product/385)
 
 # To-Do
 Software:
