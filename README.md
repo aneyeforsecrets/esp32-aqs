@@ -1,5 +1,6 @@
 # esp32-aqs
 An ESP32-Based Air Quality Sensor.
+![image](https://i.imgur.com/rK60fyv.jpg)
 
 # Goal
 Goal of the project is to build and configure an air quality sensor that sends air quality metrics to an external destination and caches it locally if no internet connection is available.
